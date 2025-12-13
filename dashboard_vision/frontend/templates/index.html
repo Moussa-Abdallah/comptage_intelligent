@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Vision Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<h1>🎥 Vision Dashboard</h1>
+
+<div id="container">
+
+    <!-- Flux vidéo -->
+    <div id="video">
+        <img src="{{ url_for('video_feed') }}" id="video-stream">
+    </div>
+
+    <!-- Contrôles -->
+    <div id="controls">
+        <button id="capture-btn">📸 Capture</button>
+        <button id="generate-btn">📍 Generate JSON</button>
+        <button id="run-btn">🚗 Run Detection</button>
+        <p id="status"></p>
+    </div>
+
+</div>
+
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
