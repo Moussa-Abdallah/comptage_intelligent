@@ -2,11 +2,15 @@ from flask import Flask, render_template, Response, jsonify
 import cv2
 import os
 import time
-import datetime
-from capture import capture_frame
-
 import subprocess
+from capture import capture_frame
+from detection import process_frame
 
+# CONFIG
+VIDEO_PATH = "/home/moussa/Dashboard_vision/dashboard_vision/data/CarPark.mp4"          # vidéo unique
+CAPTURE_FOLDER = "/home/moussa/Dashboard_vision/dashboard_vision/data/captures"
+
+DETECTION_MODE = False
 
 app = Flask(
     __name__,
@@ -14,67 +18,67 @@ app = Flask(
     static_folder="../frontend/static"
 )
 
-VIDEO_PATH = "/home/moussa/Dashboard_vision/dashboard_vision/data/CarPark.mp4"
-CAPTURE_FOLDER = "/home/moussa/Dashboard_vision/dashboard_vision/data/captures"
-
-# Crée le dossier captures si n'existe pas
 os.makedirs(CAPTURE_FOLDER, exist_ok=True)
 
-# Chargement vidéo
+# VIDEO LOADER 
 def get_video():
     if not os.path.exists(VIDEO_PATH):
-        print(f"[ERROR] Video not found: {VIDEO_PATH}")
-        return None
+        raise RuntimeError(f"Video not found: {VIDEO_PATH}")
 
     cap = cv2.VideoCapture(VIDEO_PATH)
     if not cap.isOpened():
-        print("[ERROR] Cannot open video")
-        return None
+        raise RuntimeError("Cannot open video")
 
     print("[INFO] Video loaded successfully")
     return cap
 
 video = get_video()
 
-# Génération des frames pour MJPEG
+
+# FRAME GENERATOR
 def gen_frames():
-    global video
+    global video, DETECTION_MODE
+
     while True:
         success, frame = video.read()
-
+        # Boucle vidéo
         if not success:
-            # Fin de vidéo → boucle
             video.set(cv2.CAP_PROP_POS_FRAMES, 0)
-            time.sleep(0.05)
+            time.sleep(0.03)
             continue
+        # Resize pour dashboard
+        #frame = cv2.resize(frame, (640, 360))
 
-        # Réduction résolution pour le dashboard
-        frame = cv2.resize(frame, (640, 360))
+        # MODE DETECTION
+        if DETECTION_MODE:
+            frame = process_frame(frame)
+            cv2.putText(frame, "DETECTION MODE",
+                        (900, 30),
+                        cv2.FONT_HERSHEY_SIMPLEX,
+                        0.8,
+                        (0, 0, 255),
+                        2)
+        else:
+            cv2.putText(frame, "VIDEO MODE",
+                        (900, 30),
+                        cv2.FONT_HERSHEY_SIMPLEX,
+                        0.8,
+                        (0, 255, 0),
+                        2)
 
-        # Debug visuel
-        cv2.putText(frame,
-                    "VIDEO STREAM OK",
-                    (10, 30),
-                    cv2.FONT_HERSHEY_SIMPLEX,
-                    0.8,
-                    (0, 255, 0),
-                    2)
-
+        # Encode JPEG
         ret, buffer = cv2.imencode(".jpg", frame)
         if not ret:
             continue
 
-        frame_bytes = buffer.tobytes()
-
         yield (b"--frame\r\n"
                b"Content-Type: image/jpeg\r\n\r\n" +
-               frame_bytes +
+               buffer.tobytes() +
                b"\r\n")
 
-        # Limite FPS pour ne pas saturer CPU
         time.sleep(0.03)  # ~30 FPS
+# ROUTES
 
-# Routes Flask
 @app.route("/")
 def index():
     return render_template("index.html")
@@ -86,42 +90,34 @@ def video_feed():
         mimetype="multipart/x-mixed-replace; boundary=frame"
     )
 
-# Bouton capture d'écran
 @app.route("/capture", methods=["POST"])
 def capture():
-    global video
-    if video is None:
-        return jsonify({"status": "Video not loaded"})
-
-    filename = capture_frame(video)  # ← Utilise ton code réel
-    if filename is None:
-        return jsonify({"status": "Failed to capture frame"})
-
+    filename = capture_frame(video)
     return jsonify({"status": f"✔ Frame saved: {filename}"})
 
-# # Placeholder JSON
-# @app.route("/generate_json", methods=["POST"])
-# def generate_json():
-#     return jsonify({"status": "Generate JSON not implemented yet"})
 @app.route("/generate_json", methods=["POST"])
 def generate_json():
-    try:
-        # Lancer le script generate_json.py dans un nouveau processus
-        subprocess.run(["python3", "dashboard_vision/backend/generate_json.py"], check=True)
-        return jsonify({"status": "GUI ouvert. Place les points et enregistre le JSON dans le dossier data/"})
-    except subprocess.CalledProcessError as e:
-        return jsonify({"status": f"Erreur lors du lancement du GUI : {str(e)}"})
-    
-# Placeholder run detection
+    # Lance le GUI de placement des points
+    subprocess.Popen(["python3", "dashboard_vision/backend/generate_json.py"])
+    return jsonify({"status": "GUI ouvert pour placer les polygones"})
+
 @app.route("/run_detection", methods=["POST"])
 def run_detection():
-    return jsonify({"status": "Run detection not implemented yet"})
+    global DETECTION_MODE
+    DETECTION_MODE = True
+    return jsonify({"status": "Detection started"})
 
+@app.route("/stop_detection", methods=["POST"])
+def stop_detection():
+    global DETECTION_MODE
+    DETECTION_MODE = False
+    return jsonify({"status": "Detection stopped"})
+# MAIN 
 if __name__ == "__main__":
     app.run(
         host="0.0.0.0",
         port=5000,
-        debug=False,         # IMPORTANT : pas de double process
+        debug=False,
         threaded=True,
         use_reloader=False
     )

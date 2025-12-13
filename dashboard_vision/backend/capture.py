@@ -1,4 +1,3 @@
-# capture.py
 import cv2
 import datetime
 import os
@@ -18,18 +17,14 @@ def capture_frame(video_source):
     success, frame = video_source.read()
     if not success:
         return None
-
     # Nom horodaté pour éviter l'écrasement
     filename = os.path.join(
         CAPTURE_FOLDER,
         f"capture_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.png"
     )
-
     # Sauvegarde de l'image
     cv2.imwrite(filename, frame)
-
     return filename
-
 # Test rapide depuis ce fichier
 if __name__ == "__main__":
     cap = cv2.VideoCapture("images/CarPark.mp4")
