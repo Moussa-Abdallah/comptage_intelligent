@@ -46,3 +46,51 @@ button {
     font-size: 16px;
     cursor: pointer;
 }
+
+.affiche {
+    background:#111;
+    color: #fff;
+    padding: 16px 20px;
+    border-radius: 12px;
+    width: 260px;
+    font-family: "Segoe UI", Tahoma, sans-serif;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+}
+
+.affiche ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.affiche li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 17px;
+    margin-bottom: 12px;
+}
+
+.affiche li:last-child {
+    margin-bottom: 0;
+}
+
+.affiche span {
+    font-weight: bold;
+    font-size: 20px;
+    padding: 4px 12px;
+    border-radius: 8px;
+    min-width: 45px;
+    text-align: center;
+}
+
+/* Couleurs dynamiques */
+#free {
+    background-color: #2ecc71; /* vert */
+    color: #000;
+}
+
+#occupied {
+    background-color: #e74c3c; /* rouge */
+    color: #fff;
+}

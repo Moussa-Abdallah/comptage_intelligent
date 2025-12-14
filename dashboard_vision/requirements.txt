@@ -1,4 +1,5 @@
 flask
 opencv-python
 numpy
-ultralytics
+ultralytics==8.3.19
+supervision[assets]==0.24.0

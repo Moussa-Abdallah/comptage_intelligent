@@ -30,3 +30,23 @@ document.getElementById("run-btn").addEventListener("click", () => {
             document.getElementById("status").innerText = "Erreur backend";
         });
 });
+document.getElementById("stop-btn").addEventListener("click", () => {
+    fetch("/stop_detection", { method: "POST" })
+        .then(res => res.json())
+        .then(data => {
+            document.getElementById("status").innerText = data.status;
+        })
+        .catch(() => {
+            document.getElementById("status").innerText = "Erreur backend";
+        });
+});
+
+setInterval(() => {
+  fetch("/parking_status")
+    .then(res => res.json())
+    .then(data => {
+      document.getElementById("free").innerText = data.free;
+      document.getElementById("occupied").innerText = data.occupied;
+      document.getElementById("total").innerText = data.total;
+    });
+}, 500);

@@ -18,13 +18,22 @@
 
     <!-- Contrôles -->
     <div id="controls">
-        <button id="capture-btn">📸 Capture</button>
-        <button id="generate-btn">📍 Generate JSON</button>
-        <button id="run-btn">🚗 Run Detection</button>
+        <button id="capture-btn">Capture</button>
+        <button id="generate-btn">Generate JSON</button>
+        <button id="run-btn">Run Detection</button>
+        <button id="stop-btn">Stop Detection</button>
         <p id="status"></p>
     </div>
 
 </div>
+
+<div class="affiche">
+    <ul>
+        <li>Places libres: <span id="free">0</span></li>
+        <li>Places prises: <span id="occupied">0</span></li>
+    </ul>
+</div>
+
 
 <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
