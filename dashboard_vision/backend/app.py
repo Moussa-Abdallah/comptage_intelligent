@@ -136,7 +136,7 @@ if __name__ == "__main__":
 # import time
 # import subprocess
 # from capture import capture_frame
-# from detection import process_frame
+# from detection_byte_track import process_frame,parking_status
 
 # # CONFIG
 # CAPTURE_FOLDER = "/home/moussa/Dashboard_vision/dashboard_vision/data/captures"

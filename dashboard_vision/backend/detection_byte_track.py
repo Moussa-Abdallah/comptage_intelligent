@@ -41,7 +41,7 @@ def mark_slots(frame, detections, names):
             detections.tracker_id
         ):
             # Classes véhicules (YOLO COCO)
-            if int(cls) not in [2, 3, 5, 7]:
+            if int(cls) not in [2, 3, 4, 5, 7]:
                 continue
 
             x1, y1, x2, y2 = map(int, xyxy)
@@ -73,10 +73,10 @@ def mark_slots(frame, detections, names):
     occupied_slots = len(parking_slots) - freeslots
 
     # Infos globales
-    cv2.putText(frame, f"Free Slots: {freeslots}", (10, 40),
-                cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 255, 0), 2)
-    cv2.putText(frame, f"Occupied Slots: {occupied_slots}", (10, 80),
-                cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 0, 255), 2)
+    # cv2.putText(frame, f"Free Slots: {freeslots}", (10, 40),
+    #             cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 255, 0), 2)
+    # cv2.putText(frame, f"Occupied Slots: {occupied_slots}", (10, 80),
+    #             cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 0, 255), 2)
 
     return frame,freeslots,occupied_slots
 
@@ -91,7 +91,7 @@ def process_frame(frame):
     # Convertir vers Supervision
     detections = sv.Detections.from_ultralytics(results)
     # Filtrer véhicules
-    detections = detections[np.isin(detections.class_id, [2, 3, 5, 7])]
+    detections = detections[np.isin(detections.class_id, [2, 3, 4, 5, 7])]
     # Appliquer ByteTrack
     detections = byte_tracker.update_with_detections(detections)
     frame, free, occupied = mark_slots(frame, detections, results.names)

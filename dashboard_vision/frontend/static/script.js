@@ -41,7 +41,7 @@ document.getElementById("stop-btn").addEventListener("click", () => {
         });
 });
 
-setInterval(() => {
+let setID= setInterval(() => {
   fetch("/parking_status")
     .then(res => res.json())
     .then(data => {
