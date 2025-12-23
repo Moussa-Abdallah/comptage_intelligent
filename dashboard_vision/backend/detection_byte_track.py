@@ -40,7 +40,7 @@ def mark_slots(frame, detections, names):
             detections.class_id,
             detections.tracker_id
         ):
-            # Classes véhicules (YOLO COCO)
+            # Classes véhicules (YOLO VisDrone)
             if int(cls) not in [2, 3, 4, 5, 7]:
                 continue
 
