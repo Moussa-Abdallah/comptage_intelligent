@@ -69,8 +69,8 @@ Pour vous aider à mieux comprendre le fonctionnement du dashboard et de la dét
 
 Vous pouvez voir ci-dessous une capture d’écran du dashboard. Cliquez sur l’image pour accéder directement à la vidéo de démonstration sur YouTube :  
 
-<a href="https://youtu.be/uLnJy93g">
-  <img src="data/captures/capture_20251213_170942.png" alt="Cliquez pour voir la démo" width="600">
+<a href="https://youtu.be/x-tnABxOfAs">
+  <img src="dashboard_vision/data/captures/capture_20251213_170942.png" alt="Cliquez pour voir la démo" width="600">
 </a>
 
 Cette vidéo montre plusieurs fonctionnalités clés du projet :  
